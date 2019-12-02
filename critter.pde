@@ -4,6 +4,7 @@ import java.lang.Math;
 public class Critter {
   int x, y, size, consumed, hydrated, stepSize;
   int[] target;
+  color targetColor;
   color c;
   
   public Critter() {
@@ -18,6 +19,7 @@ public class Critter {
     this.hydrated = 255;
     this.stepSize = 5;
     target = new int[] {x, y};
+    targetColor = color(0);
   }
   
   public boolean tick(LinkedList<int[]> foodList, LinkedList<int[]> waterList, LinkedList<Critter> mates) {
@@ -43,6 +45,7 @@ public class Critter {
   public void draw(boolean drawTarget) {
     c = color(255, consumed, hydrated);
     fill(c);
+    stroke(targetColor);
     ellipse(x, y, size, size);
     
     if (drawTarget) {
@@ -53,6 +56,7 @@ public class Critter {
         line(x, y, closeT[0], closeT[1]);
       }
     }
+    stroke(0);
   }
   
   private int[] closerCoords(int[] o) {
@@ -99,6 +103,7 @@ public class Critter {
       }
       
       if (minCritter != null) {
+        targetColor = minCritter.c;
         target = new int[] {
           minCritter.x,
           minCritter.y
@@ -106,17 +111,21 @@ public class Critter {
       }
     } else if (foodList.size() == 0 && waterList.size() != 0) {
       // try to drink
+      targetColor = waterColor;
       target = findClosest(waterList);
     } else if (waterList.size() == 0 && foodList.size() != 0) {
       // try to eat
+      targetColor = foodColor;
       target = findClosest(foodList);
     } else if (foodList.size() != 0 && waterList.size() != 0) {
       // do whatever is the most worthwhile
       int[] targetFood = findClosest(foodList);
       int[] targetWater = findClosest(waterList);
       if (distanceTo(targetFood)/consumed < distanceTo(targetWater)/hydrated) {
+        targetColor = foodColor;
         target = targetFood;
       } else {
+        targetColor = waterColor;
         target = targetWater;
       }
     } 

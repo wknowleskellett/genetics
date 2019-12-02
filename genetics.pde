@@ -17,17 +17,29 @@ int tickMax = 1;
 void setup() {
   background(117);
   size(800,500);
-  initializePopulation();
   initializeMap();
+  initializePopulation();
 }
 
 void draw() {
   slowTick = (slowTick + 1) % tickMax;
   if (slowTick == 0) {
     background(117);
+    tickResources();
     tickPopulation();
     drawResources();
     drawPopulation();
+  }
+}
+
+void initializeMap() {
+  food = new LinkedList<int[]>();
+  water = new LinkedList<int[]>();
+  for (int i=0; i<foodInitAmount; i++) {
+    food.add(new int[] {(int) random(0, width), (int) random(0, height)});
+  }
+  for (int i=0; i<waterInitAmount; i++) {
+    water.add(new int[] {(int) random(0, width), (int) random(0, height)});
   }
 }
 
@@ -35,6 +47,15 @@ void initializePopulation() {
   population = new LinkedList<Critter>();
   for (int i=0; i < populationSize; i++) {
     population.add(new Critter());
+  }
+}
+
+void tickResources() {
+  for (int i=0; i<5; i++) {
+    water.add(new int[] {(int) random(0, width), (int) random(0, height)});
+  }
+  for (int i=0; i<4; i++) {
+    food.add(new int[] {(int) random(0, width), (int) random(0, height)});
   }
 }
 
@@ -101,17 +122,6 @@ void drawResources() {
   fill(waterColor);
   for (int[] coord : water) {
     ellipse(coord[0], coord[1], 5, 5);
-  }
-}
-
-void initializeMap() {
-  food = new LinkedList<int[]>();
-  water = new LinkedList<int[]>();
-  for (int i=0; i<foodInitAmount; i++) {
-    food.add(new int[] {(int) random(0, width), (int) random(0, height)});
-  }
-  for (int i=0; i<waterInitAmount; i++) {
-    water.add(new int[] {(int) random(0, width), (int) random(0, height)});
   }
 }
 
