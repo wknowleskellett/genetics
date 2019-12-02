@@ -5,11 +5,14 @@ int populationSize = 50;
 LinkedList<Critter> population;
 
 LinkedList<int[]> food;
-int foodInitAmount = 2000;
+int foodInitAmount = 3000;
 color foodColor = color(0, 195, 39);
 LinkedList<int[]> water;
-int waterInitAmount = 2000;
+int waterInitAmount = 3000;
 color waterColor = color(0, 39, 195);
+
+int slowTick = 0;
+int tickMax = 1;
 
 void setup() {
   background(117);
@@ -19,10 +22,13 @@ void setup() {
 }
 
 void draw() {
-  background(117);
-  tickPopulation();
-  drawResources();
-  drawPopulation();
+  slowTick = (slowTick + 1) % tickMax;
+  if (slowTick == 0) {
+    background(117);
+    tickPopulation();
+    drawResources();
+    drawPopulation();
+  }
 }
 
 void initializePopulation() {
@@ -54,6 +60,17 @@ void tickPopulation() {
           c.drink(100);
         }
       }
+      
+      Iterator critIt2 = population.iterator();
+      while (critIt2.hasNext() && c.consumed > 230 && c.hydrated > 230) {
+        Critter o = (Critter) critIt2.next();
+        if (o != c && o.consumed > 230 && o.hydrated > 230 && distance(o.x, o.y, c.x, c.y)< 5) {
+          c.consumed -= 100;
+          c.hydrated -= 100;
+          o.consumed -= 100;
+          o.hydrated -= 100;
+        }
+      }
     } else {
       food.add(new int[] {c.x, c.y});
       critIt.remove();
@@ -63,7 +80,7 @@ void tickPopulation() {
 
 void drawPopulation() {
   for (Critter c : population) {
-    c.draw();
+    c.draw(true);
   }
 }
 

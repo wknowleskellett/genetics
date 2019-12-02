@@ -2,7 +2,8 @@ import java.util.LinkedList;
 import java.lang.Math;
 
 public class Critter {
-  int x, y, targetX, targetY, size, consumed, hydrated, stepSize;
+  int x, y, size, consumed, hydrated, stepSize;
+  int[] target;
   color c;
   
   public Critter() {
@@ -24,10 +25,9 @@ public class Critter {
     if (consumed == 0 || hydrated == 0) {
       return false;
     }
-    
     findTarget(foodList, waterList, mates);
+    step();
     
-    step(0, 0);
     return true;
   }
   
@@ -39,13 +39,24 @@ public class Critter {
     hydrated += waterAmount;// min(255, hydrated+waterAmount);
   }
   
-  public void draw() {
+  public void draw(boolean drawTarget) {
     c = color(255, consumed, hydrated);
     fill(c);
     ellipse(x, y, size, size);
+    
+    if (drawTarget) {
+      int[] closeT = closerCoords(target);
+      if (closeT[0] == target[0] && closeT[1] == target[1]) {
+        line(x, y, target[0], target[1]);
+      } else {
+        line(x, y, closeT[0], closeT[1]);
+      }
+    }
   }
   
-  private int[] closerCoords(int oX, int oY) {
+  private int[] closerCoords(int[] o) {
+    int oX = o[0];
+    int oY = o[1];
     if (x - oX > width / 2) {
       oX += width;
     } else if (oX - x > width / 2) {
@@ -60,25 +71,24 @@ public class Critter {
     return new int[] {oX, oY};
   }
   
-  private float distanceToCritter(Critter o) {
-    int[] closeO = closerCoords(o.x, o.y);
+  private float distanceTo(int[] point) {
+    int[] closeP = closerCoords(point);
     
-    sqrt(pow(x - closeO[0], 2) + pow(y - closeO[0], 2));
-    return 5;
+    return sqrt(pow(x - closeP[0], 2) + pow(y - closeP[1], 2));
   }
   
   private void findTarget(LinkedList<int[]> foodList, LinkedList<int[]> waterList, LinkedList<Critter> mates) {
-    if (consumed > 150 && hydrated > 150 && mates.size() > 1) {
+    if (consumed > 230 && hydrated > 230 && mates.size() > 1) {
       // plenty food, plenty water, try to mate
       Critter minCritter = null;
       float minDist = -1;
       for (Critter other : mates) {
         if (other != this) {
           if (minDist == -1) {
-            minDist = distanceToCritter(other);
+            minDist = distanceTo(new int[] {other.x, other.y});
             minCritter = other;
           } else {
-            float dist = distanceToCritter(other);
+            float dist = distanceTo(new int[] {other.x, other.y});
             if (dist < minDist) {
               minDist = dist;
               minCritter = other;
@@ -88,28 +98,52 @@ public class Critter {
       }
       
       if (minCritter != null) {
-        targetX = minCritter.x;
-        targetY = minCritter.y;
+        target = new int[] {
+          minCritter.x,
+          minCritter.y
+        };
       }
     } else if (foodList.size() == 0 && waterList.size() != 0) {
       // try to drink
-      
+      target = findClosest(waterList);
     } else if (waterList.size() == 0 && foodList.size() != 0) {
       // try to eat
+      target = findClosest(foodList);
     } else if (foodList.size() != 0 && waterList.size() != 0) {
-      // do whatever is the quickest
-      
+      // do whatever is the most worthwhile
+      int[] targetFood = findClosest(foodList);
+      int[] targetWater = findClosest(waterList);
+      if (distanceTo(targetFood)/consumed < distanceTo(targetWater)/hydrated) {
+        target = targetFood;
+      } else {
+        target = targetWater;
+      }
     } 
   }
   
-  int[] findClosest(LinkedList<int[]> resource) {
+  private int[] findClosest(LinkedList<int[]> resources) {
     int[] closest = null;
-    
-    return null;
+    float minDist = -1;
+    for (int[] coord : resources) {
+      if (minDist == -1) {
+        minDist = distanceTo(coord);
+        closest = coord;
+      } else {
+        float dist = distanceTo(coord);
+        if (dist < minDist) {
+          minDist = dist;
+          closest = coord;
+        }
+      }
+    }
+    if (closest != null) {
+      return closest;
+    }
+    return new int[] {x, y};
   }
   
-  private void step(int tX, int tY) {
-    int[] tC = closerCoords(tX, tY);
+  private void step() {
+    int[] tC = closerCoords(target);
     if (tC[0] == x) {
       if (tC[1]> y) {
         y += stepSize;
@@ -123,11 +157,11 @@ public class Critter {
         x -= stepSize;
       }
     } else {
-      float theta = atan((tC[1] - y)/(tC[0]-x));
+      float theta = atan2((tC[1] - y),(tC[0]-x));
       int dX = (int) (stepSize * cos(theta));
       int dY = (int) (stepSize * sin(theta));
+      x = Math.floorMod((x + dX), width);
+      y = Math.floorMod((y + dY), height);
     }
-    x = Math.floorMod((x + (int)random(-5, 5)), width);
-    y = Math.floorMod((y + (int)random(-5, 5)), height);
   }
 }
