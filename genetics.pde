@@ -39,6 +39,7 @@ void initializePopulation() {
 }
 
 void tickPopulation() {
+  LinkedList<int[]> babies = new LinkedList<int[]>();
   Iterator critIt = population.iterator();
   while (critIt.hasNext()) {
     Critter c = (Critter) critIt.next();
@@ -62,19 +63,27 @@ void tickPopulation() {
       }
       
       Iterator critIt2 = population.iterator();
-      while (critIt2.hasNext() && c.consumed > 230 && c.hydrated > 230) {
-        Critter o = (Critter) critIt2.next();
-        if (o != c && o.consumed > 230 && o.hydrated > 230 && distance(o.x, o.y, c.x, c.y)< 5) {
-          c.consumed -= 100;
-          c.hydrated -= 100;
-          o.consumed -= 100;
-          o.hydrated -= 100;
+      if (c.consumed > 230 && c.hydrated > 230) {
+        while (critIt2.hasNext()) {
+          Critter o = (Critter) critIt2.next();
+          if (o != c && o.consumed > 230 && o.hydrated > 230 && distance(o.x, o.y, c.x, c.y)< 5) {
+            c.consumed -= 100;
+            c.hydrated -= 100;
+            o.consumed -= 100;
+            o.hydrated -= 100;
+            babies.add(new int[] {c.x, c.y});
+            break;
+          }
         }
       }
     } else {
       food.add(new int[] {c.x, c.y});
       critIt.remove();
     }
+  }
+  
+  for (int[] baby : babies) {
+    population.add(new Critter(baby[0], baby[1], 5));
   }
 }
 

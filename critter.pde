@@ -17,6 +17,7 @@ public class Critter {
     this.consumed = 255;
     this.hydrated = 255;
     this.stepSize = 5;
+    target = new int[] {x, y};
   }
   
   public boolean tick(LinkedList<int[]> foodList, LinkedList<int[]> waterList, LinkedList<Critter> mates) {
