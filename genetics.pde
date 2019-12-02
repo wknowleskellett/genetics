@@ -1,6 +1,9 @@
 import java.util.LinkedList;
 import java.util.Iterator;
 
+PrintWriter output;
+int dataTick = 50;
+
 int populationSize = 50;
 LinkedList<Critter> population;
 
@@ -11,24 +14,42 @@ LinkedList<int[]> water;
 int waterInitAmount = 300;
 color waterColor = color(0, 39, 195);
 
-int slowTick = 0;
-int tickMax = 1;
+int ticks = 0;
 
 void setup() {
   background(117);
   size(800,500);
   initializeMap();
   initializePopulation();
+  
+  output = createWriter("data.csv");
+  output.println("t, Population, Food, Water");
 }
 
 void draw() {
-  slowTick = (slowTick + 1) % tickMax;
-  if (slowTick == 0) {
-    background(117);
-    tickResources();
-    tickPopulation();
-    drawResources();
-    drawPopulation();
+  background(117);
+  tickResources();
+  tickPopulation();
+  drawResources();
+  drawPopulation();
+  
+  if (ticks % dataTick == 0) {
+    String out = "";
+    out += (ticks/dataTick);
+    println(out);
+    out += ", " + population.size();
+    out += ", " + food.size();
+    out += ", " + water.size();
+    output.println(out);
+  }
+  ticks += 1;
+}
+
+void keyPressed() {
+  if (keyCode == ESC) {
+    output.flush();
+    output.close();
+    exit();
   }
 }
 
