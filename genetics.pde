@@ -5,10 +5,10 @@ int populationSize = 50;
 LinkedList<Critter> population;
 
 LinkedList<int[]> food;
-int foodInitAmount = 3000;
+int foodInitAmount = 300;
 color foodColor = color(0, 195, 39);
 LinkedList<int[]> water;
-int waterInitAmount = 3000;
+int waterInitAmount = 300;
 color waterColor = color(0, 39, 195);
 
 int slowTick = 0;
@@ -49,7 +49,7 @@ void tickPopulation() {
         int[] coord = (int[]) foodIt.next();
         if (distance(coord[0], coord[1], c.x, c.y)< 5) {
           foodIt.remove();
-          c.eat(100);
+          c.eat(10);
         }
       }
       
@@ -58,7 +58,7 @@ void tickPopulation() {
         int[] coord = (int[]) waterIt.next();
         if (distance(coord[0], coord[1], c.x, c.y)< 5) {
           waterIt.remove();
-          c.drink(100);
+          c.drink(10);
         }
       }
       
