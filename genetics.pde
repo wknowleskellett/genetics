@@ -14,6 +14,10 @@ LinkedList<int[]> water;
 int waterInitAmount = 300;
 color waterColor = color(0, 39, 195);
 
+//This is the size of each initial critter. According to current implementation, offspring will be half the size.
+//critterSize is functional, and larger critters will eat more food at a time.
+static final int critterSize = 40;
+
 int ticks = 0;
 
 void setup() {
@@ -89,7 +93,7 @@ void tickPopulation() {
       Iterator foodIt = food.iterator();
       while (foodIt.hasNext()) {
         int[] coord = (int[]) foodIt.next();
-        if (distance(coord[0], coord[1], c.x, c.y)< 5) {
+        if (distance(coord[0], coord[1], c.x, c.y)< critterSize/2) { //chagned eat/drink distance to critterSize / 2
           foodIt.remove();
           c.eat(10);
         }
@@ -98,7 +102,7 @@ void tickPopulation() {
       Iterator waterIt = water.iterator();
       while (waterIt.hasNext()) {
         int[] coord = (int[]) waterIt.next();
-        if (distance(coord[0], coord[1], c.x, c.y)< 5) {
+        if (distance(coord[0], coord[1], c.x, c.y)< critterSize/2) { //chagned eat/drink distance to critterSize / 2
           waterIt.remove();
           c.drink(10);
         }
@@ -108,7 +112,7 @@ void tickPopulation() {
       if (c.consumed > 230 && c.hydrated > 230) {
         while (critIt2.hasNext()) {
           Critter o = (Critter) critIt2.next();
-          if (o != c && o.consumed > 230 && o.hydrated > 230 && distance(o.x, o.y, c.x, c.y)< 5) {
+          if (o != c && o.consumed > 230 && o.hydrated > 230 && distance(o.x, o.y, c.x, c.y)< critterSize/2) { //chagned eat/drink distance to critterSize / 2
             c.consumed -= 100;
             c.hydrated -= 100;
             o.consumed -= 100;
@@ -125,7 +129,7 @@ void tickPopulation() {
   }
   
   for (int[] baby : babies) {
-    population.add(new Critter(baby[0], baby[1], 5));
+    population.add(new Critter(baby[0], baby[1], critterSize/2)); //changed baby size to critter size / 2
   }
 }
 
