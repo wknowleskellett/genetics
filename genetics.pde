@@ -14,6 +14,11 @@ LinkedList<int[]> water;
 int waterInitAmount = 300;
 color waterColor = color(0, 39, 195);
 
+//Standard sizes for critters and food/water
+static final int CRITTER_SIZE = 10;
+static final int FOOD_SIZE = 5;
+static final int WATER_SIZE = 5;
+
 int ticks = 0;
 
 void setup() {
@@ -84,12 +89,12 @@ void tickPopulation() {
   LinkedList<int[]> babies = new LinkedList<int[]>();
   Iterator<Critter> critIt = population.iterator();
   while (critIt.hasNext()) {
-    Critter c = critIt.next();
+   Critter c = critIt.next();
     if (c.tick(food, water, population)) {
       Iterator<int[]> foodIt = food.iterator();
       while (foodIt.hasNext()) {
         int[] coord = foodIt.next();
-        if (distance(coord[0], coord[1], c.x, c.y)< 5) {
+        if (distance(coord[0], coord[1], c.x, c.y)< (c.size+FOOD_SIZE)/2) {
           foodIt.remove();
           c.eat(10);
         }
@@ -97,8 +102,8 @@ void tickPopulation() {
       
       Iterator<int[]> waterIt = water.iterator();
       while (waterIt.hasNext()) {
-        int[] coord = waterIt.next();
-        if (distance(coord[0], coord[1], c.x, c.y)< 5) {
+       int[] coord = waterIt.next();
+        if (distance(coord[0], coord[1], c.x, c.y)< (c.size+WATER_SIZE)/2) {
           waterIt.remove();
           c.drink(10);
         }
@@ -108,7 +113,7 @@ void tickPopulation() {
       if (c.consumed > 230 && c.hydrated > 230) {
         while (critIt2.hasNext()) {
           Critter o = critIt2.next();
-          if (o != c && o.consumed > 230 && o.hydrated > 230 && distance(o.x, o.y, c.x, c.y)< 5) {
+          if (o != c && o.consumed > 230 && o.hydrated > 230 && distance(o.x, o.y, c.x, c.y)< (o.size+c.size)/2) {
             c.consumed -= 100;
             c.hydrated -= 100;
             o.consumed -= 100;
@@ -125,7 +130,7 @@ void tickPopulation() {
   }
   
   for (int[] baby : babies) {
-    population.add(new Critter(baby[0], baby[1], 5));
+    population.add(new Critter(baby[0], baby[1], CRITTER_SIZE));
   }
 }
 
@@ -138,11 +143,11 @@ void drawPopulation() {
 void drawResources() {
   fill(foodColor);
   for (int[] coord : food) {
-    ellipse(coord[0], coord[1], 5, 5);
+    ellipse(coord[0], coord[1], FOOD_SIZE, FOOD_SIZE);
   }
   fill(waterColor);
   for (int[] coord : water) {
-    ellipse(coord[0], coord[1], 5, 5);
+    ellipse(coord[0], coord[1], WATER_SIZE, WATER_SIZE);
   }
 }
 

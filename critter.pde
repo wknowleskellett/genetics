@@ -8,7 +8,7 @@ public class Critter {
   color c;
   
   public Critter() {
-    this((int) random(0, width), (int) random(0, height), 10);
+    this((int) random(0, width), (int) random(0, height), genetics.CRITTER_SIZE);
   }
   
   public Critter(int x, int y, int size) {
