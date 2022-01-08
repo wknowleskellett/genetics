@@ -82,32 +82,32 @@ void tickResources() {
 
 void tickPopulation() {
   LinkedList<int[]> babies = new LinkedList<int[]>();
-  Iterator critIt = population.iterator();
+  Iterator<Critter> critIt = population.iterator();
   while (critIt.hasNext()) {
-    Critter c = (Critter) critIt.next();
+    Critter c = critIt.next();
     if (c.tick(food, water, population)) {
-      Iterator foodIt = food.iterator();
+      Iterator<int[]> foodIt = food.iterator();
       while (foodIt.hasNext()) {
-        int[] coord = (int[]) foodIt.next();
+        int[] coord = foodIt.next();
         if (distance(coord[0], coord[1], c.x, c.y)< 5) {
           foodIt.remove();
           c.eat(10);
         }
       }
       
-      Iterator waterIt = water.iterator();
+      Iterator<int[]> waterIt = water.iterator();
       while (waterIt.hasNext()) {
-        int[] coord = (int[]) waterIt.next();
+        int[] coord = waterIt.next();
         if (distance(coord[0], coord[1], c.x, c.y)< 5) {
           waterIt.remove();
           c.drink(10);
         }
       }
       
-      Iterator critIt2 = population.iterator();
+      Iterator<Critter> critIt2 = population.iterator();
       if (c.consumed > 230 && c.hydrated > 230) {
         while (critIt2.hasNext()) {
-          Critter o = (Critter) critIt2.next();
+          Critter o = critIt2.next();
           if (o != c && o.consumed > 230 && o.hydrated > 230 && distance(o.x, o.y, c.x, c.y)< 5) {
             c.consumed -= 100;
             c.hydrated -= 100;
