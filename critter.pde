@@ -15,7 +15,7 @@ public class Critter {
     this.x = x;
     this.y = y;
     this.size = size;
-    this.consumed = 255;
+    this.consumed = 256;
     this.hydrated = 255;
     this.stepSize = 5;
     target = new int[] {x, y};
