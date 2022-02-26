@@ -9,7 +9,7 @@ LinkedList<Critter> population;
 
 LinkedList<int[]> food;
 int foodInitAmount = 300;
-color foodColor = color(0, 195, 39);
+color foodColor = color(200, 0, 200);
 LinkedList<int[]> water;
 int waterInitAmount = 300;
 color waterColor = color(0, 39, 195);
